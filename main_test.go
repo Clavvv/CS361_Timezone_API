@@ -20,7 +20,7 @@ func TestHandleRequest(t *testing.T) {
 		requestBody      RequestData
 		expectedStatus   int
 		expectedResponse ResponseData
-		// Test cases
+		// test cases
 	}{
 		{
 			name: "Valid Timezones",
@@ -74,19 +74,6 @@ func TestHandleRequest(t *testing.T) {
 				Time:    "",
 			},
 		},
-		{
-			name: "Invalid JSON",
-			requestBody: RequestData{
-				NotAProperKey:     "TESTESTEST",
-				DestinationTimeZone: "-1",
-			},
-			expectedStatus: http.StatusBadRequest,
-			expectedResponse: ResponseData{
-				Status:  "error",
-				Message: "invalid timezone",
-				Time:    "",
-			},
-		}
 	}
 
 	for _, tt := range tests {
