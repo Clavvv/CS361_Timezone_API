@@ -9,11 +9,18 @@ import (
 )
 
 func TestHandleRequest(t *testing.T) {
+	/*
+		Citation:
+		Copied/Adapted from -> https://pkg.go.dev/testing
+		Reason: Wanted to use the equivalent of assert for Python testing but for Go.
+	*/
+
 	tests := []struct {
-		name             string
+		name             string //defining format of structs
 		requestBody      RequestData
 		expectedStatus   int
 		expectedResponse ResponseData
+		// Test cases
 	}{
 		{
 			name: "Valid Timezones",
@@ -67,16 +74,35 @@ func TestHandleRequest(t *testing.T) {
 				Time:    "",
 			},
 		},
+		{
+			name: "Invalid JSON",
+			requestBody: RequestData{
+				NotAProperKey:     "TESTESTEST",
+				DestinationTimeZone: "-1",
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedResponse: ResponseData{
+				Status:  "error",
+				Message: "invalid timezone",
+				Time:    "",
+			},
+		}
 	}
 
 	for _, tt := range tests {
+
+		/*
+			Citation:
+			ADAPTED FROM -> https://pkg.go.dev/net/http/httptest
+			Reason: Documentation for testing http server via Go's testing features
+		*/
 		t.Run(tt.name, func(t *testing.T) {
 			reqBody, err := json.Marshal(tt.requestBody)
 			if err != nil {
-				t.Fatalf("could not marshal request body: %v", err)
+				t.Fatalf("could not marshal request body: %v", err) //Marshal is standard term for being able to cast a type as another usually JSON, XML to a data type in Go
 			}
 
-			req := httptest.NewRequest(http.MethodPost, "/time", bytes.NewReader(reqBody))
+			req := httptest.NewRequest(http.MethodPost, "/time", bytes.NewReader(reqBody)) // calls via http request
 			w := httptest.NewRecorder()
 
 			handleRequest(w, req)

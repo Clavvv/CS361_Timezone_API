@@ -29,7 +29,14 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	var requestData RequestData
 
 	if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
-		http.Error(w, "Invalid Json format", http.StatusBadRequest)
+		response := ResponseData{
+			Status:  "error",
+			Message: "Invalid JSON format",
+			Time:    "",
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode((response))
 		return
 	}
 
